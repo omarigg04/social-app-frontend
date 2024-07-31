@@ -1,0 +1,15 @@
+mat-toolbar {
+  background-color: rgb(192, 184, 181);
+  display: flex;
+  justify-content: space-between;
+  padding: 0 64px;
+  a {
+    text-decoration: none;
+    &.active-link {
+      color: white;
+    }
+    span {
+      margin-left: 24px;
+    }
+  }
+}
