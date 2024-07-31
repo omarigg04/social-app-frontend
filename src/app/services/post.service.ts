@@ -30,7 +30,7 @@ export class PostService {
 
   createPost(
     formData: Partial<Post>,
-    userId: Pick<User, "id">
+    userId: number
   ): Observable<Post> {
     return this.http
       .post<Post>(

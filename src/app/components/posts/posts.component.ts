@@ -15,7 +15,7 @@ import { User } from "src/app/models/User";
 })
 export class PostsComponent implements OnInit {
   posts$: Observable<Post[]>;
-  userId: Pick<User, "id">;
+  userId: number
 
   constructor(
     private postService: PostService,

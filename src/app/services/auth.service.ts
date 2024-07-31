@@ -12,7 +12,7 @@ import { ErrorHandlerService } from "./error-handler.service";
 export class AuthService {
   private url = "https://social-app-backend-e7y1.onrender.com/auth";
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
-  userId: Pick<User, "id">;
+  userId: number; // Cambia aquí el tipo a número
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
@@ -37,9 +37,9 @@ export class AuthService {
   login(
     email: Pick<User, "email">,
     password: Pick<User, "password">
-  ): Observable<{ token: string; userId: Pick<User, "id"> }> {
+  ): Observable<{ token: string; userId: number }> { // Asegúrate de que el tipo devuelto sea número
     return this.http
-      .post<{ token: string; userId: Pick<User, "id"> }>(
+      .post<{ token: string; userId: number }>(
         `${this.url}/login`,
         { email, password },
         this.httpOptions
@@ -49,13 +49,14 @@ export class AuthService {
         tap((tokenObject) => {
           this.userId = tokenObject.userId;
           localStorage.setItem("token", tokenObject.token);
+          localStorage.setItem("userId", tokenObject.userId.toString()); // Asegúrate de almacenar el userId como string
           this.isUserLoggedIn$.next(true);
           this.router.navigate(["posts"]);
         }),
         catchError(
           this.errorHandlerService.handleError<{
             token: string;
-            userId: Pick<User, "id">;
+            userId: number;
           }>("login")
         )
       );
@@ -63,14 +64,17 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     this.isUserLoggedIn$.next(false);
     this.router.navigate(["/login"]);
   }
 
   private checkLoginStatus() {
     const token = localStorage.getItem("token");
-    if (token) {
+    const userId = localStorage.getItem("userId"); // Recupera el userId del localStorage
+    if (token && userId) {
       this.isUserLoggedIn$.next(true);
+      this.userId = Number(userId); // Convierte el string a número y asigna a userId
     }
   }
 }
