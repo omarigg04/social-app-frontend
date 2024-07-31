@@ -12,7 +12,7 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class AuthService {
-  private url = "https://social-app-backend-five.vercel.app/auth";
+  private url = "https://social-app-backend-e7y1.onrender.com/auth";
 
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
   userId: Pick<User, "id">;
