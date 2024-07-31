@@ -1,16 +1,7 @@
-import {
-  Component,
-  OnInit,
-  ViewChild,
-  Output,
-  EventEmitter,
-} from "@angular/core";
+import { Component, OnInit, ViewChild, Output, EventEmitter } from "@angular/core";
 import { FormControl, FormGroup, Validators, NgForm } from "@angular/forms";
-
 import { first } from "rxjs/operators";
-
 import { Post } from "src/app/models/Post";
-
 import { AuthService } from "src/app/services/auth.service";
 import { PostService } from "src/app/services/post.service";
 
