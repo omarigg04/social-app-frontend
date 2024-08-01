@@ -10,7 +10,7 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class PostService {
-  private url = "http://localhost:3000/post";
+  private url = "https://social-app-frontend-delta.vercel.app/post";
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
