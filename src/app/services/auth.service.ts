@@ -10,7 +10,7 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class AuthService {
-  private url = "http://localhost:3000/auth";
+  private url = "https://social-app-frontend-delta.vercel.app/auth";
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
   private loadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga
   userId: number; // Cambia aquí el tipo a número
