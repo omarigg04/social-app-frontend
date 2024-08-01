@@ -12,7 +12,8 @@ import { ErrorHandlerService } from "./error-handler.service";
 export class AuthService {
   private url = "https://social-app-backend-e7y1.onrender.com/auth";
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
-  private loadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga
+  private loginLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para login
+  private signupLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para signup
   userId: number; // Cambia aquí el tipo a número
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
@@ -27,19 +28,26 @@ export class AuthService {
   }
 
   signup(user: Omit<User, "id">): Observable<User> {
+    this.signupLoadingSubject.next(true); // Inicia el estado de carga
     return this.http
       .post<User>(`${this.url}/signup`, user, this.httpOptions)
       .pipe(
         first(),
-        catchError(this.errorHandlerService.handleError<User>("signup"))
+        tap(() => {
+          this.signupLoadingSubject.next(false); // Termina el estado de carga
+        }),
+        catchError((error) => {
+          this.signupLoadingSubject.next(false); // Termina el estado de carga en caso de error
+          return this.errorHandlerService.handleError<User>("signup")(error);
+        })
       );
   }
 
   login(
     email: Pick<User, "email">,
     password: Pick<User, "password">
-  ): Observable<{ token: string; userId: number }> { // Asegúrate de que el tipo devuelto sea número
-    this.loadingSubject.next(true);
+  ): Observable<{ token: string; userId: number }> {
+    this.loginLoadingSubject.next(true); // Inicia el estado de carga para login
     return this.http
       .post<{ token: string; userId: number }>(
         `${this.url}/login`,
@@ -54,10 +62,10 @@ export class AuthService {
           localStorage.setItem("userId", tokenObject.userId.toString()); // Asegúrate de almacenar el userId como string
           this.isUserLoggedIn$.next(true);
           this.router.navigate(["posts"]);
-          this.loadingSubject.next(false); // Termina el estado de carga
+          this.loginLoadingSubject.next(false); // Termina el estado de carga
         }),
         catchError((error) => {
-          this.loadingSubject.next(false); // Termina el estado de carga en caso de error
+          this.loginLoadingSubject.next(false); // Termina el estado de carga en caso de error
           return this.errorHandlerService.handleError<{
             token: string;
             userId: number;
@@ -81,7 +89,11 @@ export class AuthService {
       this.userId = Number(userId); // Convierte el string a número y asigna a userId
     }
   }
-  isLoading(): Observable<boolean> {
-    return this.loadingSubject.asObservable();
+  isLoading(type: 'login' | 'signup'): Observable<boolean> {
+    if (type === 'login') {
+      return this.loginLoadingSubject.asObservable();
+    } else {
+      return this.signupLoadingSubject.asObservable();
+    }
   }
 }
