@@ -8,7 +8,7 @@ import { User } from 'src/app/models/User';
   providedIn: 'root'
 })
 export class UserService {
-  private apiUrl = 'https://social-app-backend-e7y1.onrender.com/api/users'; // Asegúrate de usar la URL correcta de tu backend
+  private apiUrl = 'http://localhost:3000/api/users'; // Asegúrate de usar la URL correcta de tu backend
 
   constructor(private http: HttpClient) {}
 

@@ -10,8 +10,9 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class AuthService {
-  private url = "https://social-app-backend-e7y1.onrender.com/auth";
+  private url = "http://localhost:3000/auth";
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
+  private loadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga
   userId: number; // Cambia aquí el tipo a número
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
@@ -38,6 +39,7 @@ export class AuthService {
     email: Pick<User, "email">,
     password: Pick<User, "password">
   ): Observable<{ token: string; userId: number }> { // Asegúrate de que el tipo devuelto sea número
+    this.loadingSubject.next(true);
     return this.http
       .post<{ token: string; userId: number }>(
         `${this.url}/login`,
@@ -52,13 +54,15 @@ export class AuthService {
           localStorage.setItem("userId", tokenObject.userId.toString()); // Asegúrate de almacenar el userId como string
           this.isUserLoggedIn$.next(true);
           this.router.navigate(["posts"]);
+          this.loadingSubject.next(false); // Termina el estado de carga
         }),
-        catchError(
-          this.errorHandlerService.handleError<{
+        catchError((error) => {
+          this.loadingSubject.next(false); // Termina el estado de carga en caso de error
+          return this.errorHandlerService.handleError<{
             token: string;
             userId: number;
-          }>("login")
-        )
+          }>("login")(error);
+        })
       );
   }
 
@@ -76,5 +80,8 @@ export class AuthService {
       this.isUserLoggedIn$.next(true);
       this.userId = Number(userId); // Convierte el string a número y asigna a userId
     }
+  }
+  isLoading(): Observable<boolean> {
+    return this.loadingSubject.asObservable();
   }
 }
