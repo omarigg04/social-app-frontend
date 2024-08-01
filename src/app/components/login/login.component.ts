@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     this.loginForm = this.createFormGroup();
-    this.isLoading$ = this.authService.isLoading(); // Suscribirse al estado de carga
+    this.isLoading$ = this.authService.isLoading('login'); // Suscribirse al estado de carga
   }
 
   createFormGroup(): FormGroup {
