@@ -10,7 +10,7 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class PostService {
-  private url = "https://social-app-backend-e7y1.onrender.com/post";
+  private url = "http://localhost:3000/post";
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };

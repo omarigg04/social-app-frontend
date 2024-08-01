@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
-
 import { AuthService } from "src/app/services/auth.service";
+import { Observable } from "rxjs";
 
 @Component({
   selector: "app-login",
@@ -10,11 +10,13 @@ import { AuthService } from "src/app/services/auth.service";
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+  isLoading$: Observable<boolean>; // Estado de carga
 
   constructor(private authService: AuthService) {}
 
   ngOnInit(): void {
     this.loginForm = this.createFormGroup();
+    this.isLoading$ = this.authService.isLoading(); // Suscribirse al estado de carga
   }
 
   createFormGroup(): FormGroup {
@@ -28,8 +30,12 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    this.authService
-      .login(this.loginForm.value.email, this.loginForm.value.password)
-      .subscribe();
+    if (this.loginForm.valid) {
+      const { email, password } = this.loginForm.value;
+      this.authService.login(email, password).subscribe({
+        next: () => console.log('Login successful'),
+        error: (error) => console.error('Login error', error),
+      });
+    }
   }
 }

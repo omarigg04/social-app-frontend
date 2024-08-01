@@ -1,4 +1,4 @@
-<form [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
+<form *ngIf="!(isLoading$ | async)" [formGroup]="loginForm" (ngSubmit)="login()" novalidate>
   <mat-form-field>
     <mat-label>Email</mat-label>
     <input matInput placeholder="Ex. Jon" formControlName="email" />
@@ -21,3 +21,8 @@
     <span>Log in</span>
   </button>
 </form>
+
+  <!-- Spinner -->
+  <div *ngIf="isLoading$ | async" class="spinner">
+    <mat-progress-spinner mode="indeterminate"></mat-progress-spinner>
+  </div>
