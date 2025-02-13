@@ -10,13 +10,13 @@ import { ErrorHandlerService } from "./error-handler.service";
   providedIn: "root",
 })
 export class AuthService {
-  private url = "https://social-app-backend-e7y1.onrender.com/auth";
-  // private url = "http://localhost:3000/auth";
+  // private url = "https://social-app-backend-e7y1.onrender.com/auth";
+  private url = "http://localhost:3000/auth";
 
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
   private loginLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para login
   private signupLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para signup
-  userId: number; // Cambia aquí el tipo a número
+  userId: String; // Cambia aquí el tipo a número
   httpOptions: { headers: HttpHeaders } = {
     headers: new HttpHeaders({ "Content-Type": "application/json" }),
   };
@@ -48,10 +48,10 @@ export class AuthService {
   login(
     email: Pick<User, "email">,
     password: Pick<User, "password">
-  ): Observable<{ token: string; userId: number }> {
+  ): Observable<{ token: string; userId: string }> { // Cambia userId a string
     this.loginLoadingSubject.next(true); // Inicia el estado de carga para login
     return this.http
-      .post<{ token: string; userId: number }>(
+      .post<{ token: string; userId: string }>( // Cambia userId a string
         `${this.url}/login`,
         { email, password },
         this.httpOptions
@@ -61,7 +61,7 @@ export class AuthService {
         tap((tokenObject) => {
           this.userId = tokenObject.userId;
           localStorage.setItem("token", tokenObject.token);
-          localStorage.setItem("userId", tokenObject.userId.toString()); // Asegúrate de almacenar el userId como string
+          localStorage.setItem("userId", tokenObject.userId); // No necesitas convertir a string
           this.isUserLoggedIn$.next(true);
           this.router.navigate(["posts"]);
           this.loginLoadingSubject.next(false); // Termina el estado de carga
@@ -70,7 +70,7 @@ export class AuthService {
           this.loginLoadingSubject.next(false); // Termina el estado de carga en caso de error
           return this.errorHandlerService.handleError<{
             token: string;
-            userId: number;
+            userId: string; // Cambia userId a string
           }>("login")(error);
         })
       );
@@ -88,7 +88,7 @@ export class AuthService {
     const userId = localStorage.getItem("userId"); // Recupera el userId del localStorage
     if (token && userId) {
       this.isUserLoggedIn$.next(true);
-      this.userId = Number(userId); // Convierte el string a número y asigna a userId
+      this.userId = String(userId); // Convierte el string a número y asigna a userId
     }
   }
   isLoading(type: 'login' | 'signup'): Observable<boolean> {
