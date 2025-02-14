@@ -11,6 +11,8 @@ import { ErrorHandlerService } from "./error-handler.service";
 })
 export class AuthService {
   private url = "https://social-app-backend-e7y1.onrender.com/auth";
+  // private url = "http://localhost:3000/auth";
+
   isUserLoggedIn$ = new BehaviorSubject<boolean>(false);
   private loginLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para login
   private signupLoadingSubject = new BehaviorSubject<boolean>(false); // Estado de carga para signup
